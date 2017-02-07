@@ -144,6 +144,7 @@ public class WeekView extends View {
     private int mNewEventTimeResolutionInMinutes = 15;
     private boolean mShowFirstDayOfWeekFirst = false;
 
+    private boolean autoEventTextColors = false;
     private boolean mIsFirstDraw = true;
     private boolean mAreDimensionsInvalid = true;
     @Deprecated
@@ -1085,6 +1086,9 @@ public class WeekView extends View {
         int availableWidth = (int) (rect.right - originalLeft - mEventPadding * 2);
 
         // Get text dimensions.
+        if(autoEventTextColors) {
+            mEventTextPaint.setColor(WeekViewUtil.getTextColor(event.getColor()));
+        }
         StaticLayout textLayout = new StaticLayout(bob, mEventTextPaint, availableWidth, Layout.Alignment.ALIGN_NORMAL, 1.0f, 0.0f, false);
         if(textLayout.getLineCount() > 0) {
             int lineHeight = textLayout.getHeight() / textLayout.getLineCount();
@@ -1787,6 +1791,14 @@ public class WeekView extends View {
         mEventTextColor = eventTextColor;
         mEventTextPaint.setColor(mEventTextColor);
         invalidate();
+    }
+
+    public void setAutoEventTextColors(boolean autoEventTextColors) {
+        this.autoEventTextColors = autoEventTextColors;
+    }
+
+    public boolean hasAutoEventTextColors() {
+        return autoEventTextColors;
     }
 
     public int getEventPadding() {
