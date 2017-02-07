@@ -452,6 +452,7 @@ public class WeekView extends View {
             mZoomFocusPointEnabled = a.getBoolean(R.styleable.WeekView_zoomFocusPointEnabled, mZoomFocusPointEnabled);
             mScrollDuration = a.getInt(R.styleable.WeekView_scrollDuration, mScrollDuration);
             mShowHalfHours = a.getBoolean(R.styleable.WeekView_showHalfHours, mShowHalfHours);
+            autoEventTextColors = a.getBoolean(R.styleable.WeekView_autoTextColor, autoEventTextColors);
         } finally {
             a.recycle();
         }
