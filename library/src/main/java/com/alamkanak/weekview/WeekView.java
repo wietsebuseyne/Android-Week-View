@@ -462,6 +462,7 @@ public class WeekView extends View {
             mAutoLimitTime = a.getBoolean(R.styleable.WeekView_autoLimitTime, mAutoLimitTime);
             mMinTime = a.getInt(R.styleable.WeekView_minTime, mMinTime);
             mMaxTime = a.getInt(R.styleable.WeekView_maxTime, mMaxTime);
+            autoEventTextColors = a.getBoolean(R.styleable.WeekView_autoTextColor, autoEventTextColors);
         } finally {
             a.recycle();
         }
