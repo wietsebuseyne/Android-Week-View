@@ -264,7 +264,8 @@ public class WeekViewEvent {
             event2.setColor(this.getColor());
             events.add(event2);
         } else {
-            WeekViewEvent weekViewEvent = new WeekViewEvent(this.getId(), this.getName(), this.getLocation(), fixedStartTime, fixedEndTime, this.isAllDay());
+            WeekViewEvent weekViewEvent = new WeekViewEvent(this.getId(), this.getName(), this.getLocation(), fixedStartTime, fixedEndTime, this.isAllDay(), this.getShader());
+            weekViewEvent.setColor(getColor());
             events.add(weekViewEvent);
         }
 
