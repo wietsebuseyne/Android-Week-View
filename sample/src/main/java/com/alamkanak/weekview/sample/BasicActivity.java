@@ -3,11 +3,14 @@ package com.alamkanak.weekview.sample;
 import android.graphics.Typeface;
 import android.os.Bundle;
 
+import com.alamkanak.weekview.DateTimeInterpreter;
 import com.alamkanak.weekview.WeekViewEvent;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * A basic example of how to use week view library.
@@ -22,6 +25,20 @@ public class BasicActivity extends BaseActivity {
 
         Typeface customTypeface = Typeface.createFromAsset(this.getAssets(), "fonts/Raleway/Raleway-Medium.ttf");
         mWeekView.setTypeface(customTypeface);
+        mWeekView.setStartHour(7);
+        mWeekView.setDateTimeInterpreter(new DateTimeInterpreter() {
+
+            SimpleDateFormat sdf = new SimpleDateFormat("EE dd MMM", Locale.getDefault());
+            @Override
+            public String interpretDate(Calendar date) {
+                return sdf.format(date.getTime());
+            }
+
+            @Override
+            public String interpretTime(int hour, int minutes) {
+                return String.format(Locale.getDefault(), "%02d:%02d", hour, minutes);
+            }
+        });
     }
 
     @Override

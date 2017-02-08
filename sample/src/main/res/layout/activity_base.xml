@@ -24,6 +24,8 @@
         app:headerColumnBackground="#ffffffff"
         app:todayHeaderTextColor="@color/accent"
         app:newEventTimeResolutionInMinutes="15"
+        app:showNowLine="true"
+        app:nowLineColor="#ff0000"
         app:showHalfHours="false" />
 
 </RelativeLayout>

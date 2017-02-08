@@ -330,7 +330,14 @@ public class WeekView extends View {
                         selectedTime.add(Calendar.MINUTE, mod < Math.ceil(mNewEventTimeResolutionInMinutes / 2) ? -mod : (mNewEventTimeResolutionInMinutes - mod));
 
                         Calendar endTime = (Calendar) selectedTime.clone();
-                        endTime.add(Calendar.MINUTE, Math.min(mNewEventLengthInMinutes, (24 - selectedTime.get(Calendar.HOUR_OF_DAY))*60 - selectedTime.get(Calendar.MINUTE)) - 1);
+                        //Minus one to ensure it is the same day and not midnight (next day)
+                        int maxMinutes = (24-selectedTime.get(Calendar.HOUR_OF_DAY))*60 - selectedTime.get(Calendar.MINUTE) - 1;
+                        endTime.add(Calendar.MINUTE, Math.min(maxMinutes, mNewEventLengthInMinutes));
+                        //If clicked at end of the day, fix selected startTime
+                        if(maxMinutes < mNewEventLengthInMinutes) {
+                            selectedTime.add(Calendar.MINUTE, maxMinutes - mNewEventLengthInMinutes);
+                        }
+
                         WeekViewEvent newEvent = new WeekViewEvent(mNewEventId, "", null, selectedTime, endTime);
 
                         float top = selectedTime.get(Calendar.HOUR_OF_DAY) * 60;
@@ -980,7 +987,7 @@ public class WeekView extends View {
                 float pixelsFromZero = y - mCurrentOrigin.y - mHeaderHeight
                         - mHeaderRowPadding * 2 - mTimeTextHeight/2 - mHeaderMarginBottom;
                 int hour = (int)(pixelsFromZero / mHourHeight);
-                int minute = (int) (60 * (pixelsFromZero - hour * mHourHeight) / mHourHeight);
+                int minute = (int) (60 * (pixelsFromZero - hour * mHourHeight) / mHourHeight) - (mNewEventLengthInMinutes / 2);
                 day.add(Calendar.HOUR, hour);
                 day.set(Calendar.MINUTE, minute);
                 return day;
