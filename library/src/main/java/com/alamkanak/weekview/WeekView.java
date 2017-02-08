@@ -106,6 +106,7 @@ public class WeekView extends View {
     private int mMinimumFlingVelocity = 0;
     private int mScaledTouchSlop = 0;
     private EventRect mNewEventRect;
+    private TextColorPicker textColorPicker;
 
     // Attributes and their default values.
     private int mHourHeight = 50;
@@ -144,7 +145,6 @@ public class WeekView extends View {
     private int mNewEventTimeResolutionInMinutes = 15;
     private boolean mShowFirstDayOfWeekFirst = false;
 
-    private boolean autoEventTextColors = false;
     private boolean mIsFirstDraw = true;
     private boolean mAreDimensionsInvalid = true;
     @Deprecated
@@ -459,7 +459,6 @@ public class WeekView extends View {
             mZoomFocusPointEnabled = a.getBoolean(R.styleable.WeekView_zoomFocusPointEnabled, mZoomFocusPointEnabled);
             mScrollDuration = a.getInt(R.styleable.WeekView_scrollDuration, mScrollDuration);
             mShowHalfHours = a.getBoolean(R.styleable.WeekView_showHalfHours, mShowHalfHours);
-            autoEventTextColors = a.getBoolean(R.styleable.WeekView_autoTextColor, autoEventTextColors);
         } finally {
             a.recycle();
         }
@@ -961,7 +960,7 @@ public class WeekView extends View {
                 float pixelsFromZero = y - mCurrentOrigin.y - mHeaderHeight
                         - mHeaderRowPadding * 2 - mTimeTextHeight/2 - mHeaderMarginBottom;
                 int hour = (int)(pixelsFromZero / mHourHeight);
-                int minute = (int) (60 * (pixelsFromZero - hour * mHourHeight) / mHourHeight);
+                int minute = (int) (60 * (pixelsFromZero - hour * mHourHeight) / mHourHeight) - (mNewEventLengthInMinutes / 2);
                 day.add(Calendar.HOUR, hour);
                 day.set(Calendar.MINUTE, minute);
                 return day;
@@ -1094,8 +1093,8 @@ public class WeekView extends View {
         int availableWidth = (int) (rect.right - originalLeft - mEventPadding * 2);
 
         // Get text dimensions.
-        if(autoEventTextColors) {
-            mEventTextPaint.setColor(WeekViewUtil.getTextColor(event.getColor()));
+        if(textColorPicker != null) {
+            mEventTextPaint.setColor(textColorPicker.getTextColor(event));
         }
         StaticLayout textLayout = new StaticLayout(bob, mEventTextPaint, availableWidth, Layout.Alignment.ALIGN_NORMAL, 1.0f, 0.0f, false);
         if(textLayout.getLineCount() > 0) {
@@ -1801,12 +1800,12 @@ public class WeekView extends View {
         invalidate();
     }
 
-    public void setAutoEventTextColors(boolean autoEventTextColors) {
-        this.autoEventTextColors = autoEventTextColors;
+    public void setTextColorPicker(TextColorPicker textColorPicker) {
+        this.textColorPicker = textColorPicker;
     }
 
-    public boolean hasAutoEventTextColors() {
-        return autoEventTextColors;
+    public TextColorPicker getTextColorPicker() {
+        return textColorPicker;
     }
 
     public int getEventPadding() {
