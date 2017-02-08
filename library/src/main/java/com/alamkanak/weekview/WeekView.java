@@ -347,7 +347,7 @@ public class WeekView extends View {
                         // Calculate left and right.
                         float left = 0;
                         float right = left + mWidthPerDay;
-                        // Draw the event and the event name on top of it.
+                        // Add the new event if its bounds are valid
                         if (left < right &&
                                 left < getWidth() &&
                                 top < getHeight() &&
@@ -358,9 +358,10 @@ public class WeekView extends View {
                             newEvent.setColor(mNewEventColor);
                             mNewEventRect = new EventRect(newEvent, newEvent, dayRectF);
                             tempEventRects.add(mNewEventRect);
-                            invalidate();
-                            computePositionOfEvents(tempEventRects);
                         }
+                        // Always redraw the events
+                        invalidate();
+                        computePositionOfEvents(tempEventRects);
                     }
                 }
             }
@@ -960,7 +961,9 @@ public class WeekView extends View {
                 float pixelsFromZero = y - mCurrentOrigin.y - mHeaderHeight
                         - mHeaderRowPadding * 2 - mTimeTextHeight/2 - mHeaderMarginBottom;
                 int hour = (int)(pixelsFromZero / mHourHeight);
-                int minute = (int) (60 * (pixelsFromZero - hour * mHourHeight) / mHourHeight) - (mNewEventLengthInMinutes / 2);
+                int minute = (int) (60 * (pixelsFromZero - hour * mHourHeight) / mHourHeight);
+                minute -= Math.min(minute,  (mNewEventLengthInMinutes / 2));
+
                 day.add(Calendar.HOUR, hour);
                 day.set(Calendar.MINUTE, minute);
                 return day;
