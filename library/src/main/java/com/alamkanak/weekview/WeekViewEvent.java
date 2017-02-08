@@ -1,14 +1,13 @@
 package com.alamkanak.weekview;
 
-import android.graphics.Shader;
-import android.support.annotation.ColorInt;
-import android.widget.ShareActionProvider;
+        import android.graphics.Shader;
+        import android.support.annotation.ColorInt;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
+        import java.util.ArrayList;
+        import java.util.Calendar;
+        import java.util.List;
 
-import static com.alamkanak.weekview.WeekViewUtil.*;
+        import static com.alamkanak.weekview.WeekViewUtil.*;
 
 /**
  * Created by Raquib-ul-Alam Kanak on 7/21/2014.
@@ -201,26 +200,48 @@ public class WeekViewEvent {
     }
 
     public List<WeekViewEvent> splitWeekViewEvents(){
+        return splitWeekViewEvents(0);
+    }
+
+    /**
+     * Split the events into events used by the Week-View, taking the startHour into account
+     * @param startHour The startHour
+     * @return The splitted events per day
+     */
+    public List<WeekViewEvent> splitWeekViewEvents(int startHour){
         //This function splits the WeekViewEvent in WeekViewEvents by day
-        List<WeekViewEvent> events = new ArrayList<WeekViewEvent>();
+        List<WeekViewEvent> events = new ArrayList<>();
         // The first millisecond of the next day is still the same day. (no need to split events for this).
-        Calendar endTime = (Calendar) this.getEndTime().clone();
-        endTime.add(Calendar.MILLISECOND, -1);
-        if (!isSameDay(this.getStartTime(), endTime)) {
-            endTime = (Calendar) this.getStartTime().clone();
-            endTime.set(Calendar.HOUR_OF_DAY, 23);
-            endTime.set(Calendar.MINUTE, 59);
-            WeekViewEvent event1 = new WeekViewEvent(this.getId(), this.getName(), this.getLocation(), this.getStartTime(), endTime, this.isAllDay());
+        Calendar fixedEndTime = (Calendar) this.getEndTime().clone();
+        fixedEndTime.add(Calendar.MILLISECOND, -1);
+
+        Calendar fixedStartTime = (Calendar) this.getStartTime().clone();
+
+        //Events that take all day should only be shown on their exact dates
+        //and thus their times should not include the startHour
+        if(!isAllDay()) {
+            fixedEndTime.add(Calendar.HOUR_OF_DAY, -startHour);
+            fixedStartTime.add(Calendar.HOUR, -startHour);
+        }
+
+        if (!isSameDay(fixedStartTime, fixedEndTime)) {
+            Calendar firstEndTime = (Calendar) this.getStartTime().clone();
+            firstEndTime.set(Calendar.HOUR_OF_DAY, 23);
+            firstEndTime.set(Calendar.MINUTE, 59);
+
+            WeekViewEvent event1 = new WeekViewEvent(this.getId(), this.getName(), this.getLocation(), fixedStartTime, firstEndTime, this.isAllDay());
             event1.setColor(this.getColor());
             events.add(event1);
 
             // Add other days.
-            Calendar otherDay = (Calendar) this.getStartTime().clone();
+            //fixedStartTime already takes startHour into account
+            Calendar otherDay = (Calendar) fixedStartTime.clone();
             otherDay.add(Calendar.DATE, 1);
-            while (!isSameDay(otherDay, this.getEndTime())) {
+            while (!isSameDay(otherDay, fixedEndTime)) {
                 Calendar overDay = (Calendar) otherDay.clone();
                 overDay.set(Calendar.HOUR_OF_DAY, 0);
                 overDay.set(Calendar.MINUTE, 0);
+
                 Calendar endOfOverDay = (Calendar) overDay.clone();
                 endOfOverDay.set(Calendar.HOUR_OF_DAY, 23);
                 endOfOverDay.set(Calendar.MINUTE, 59);
@@ -233,15 +254,18 @@ public class WeekViewEvent {
             }
 
             // Add last day.
-            Calendar startTime = (Calendar) this.getEndTime().clone();
-            startTime.set(Calendar.HOUR_OF_DAY, 0);
-            startTime.set(Calendar.MINUTE, 0);
-            WeekViewEvent event2 = new WeekViewEvent(this.getId(), this.getName(), this.getLocation(), startTime, this.getEndTime(), this.isAllDay());
+            Calendar lastStartTime = (Calendar) fixedEndTime.clone();
+            lastStartTime.set(Calendar.HOUR_OF_DAY, 0);
+            lastStartTime.set(Calendar.MINUTE, 0);
+
+            Calendar lastEndTime = (Calendar) fixedEndTime.clone();
+
+            WeekViewEvent event2 = new WeekViewEvent(this.getId(), this.getName(), this.getLocation(), lastStartTime, lastEndTime, this.isAllDay());
             event2.setColor(this.getColor());
             events.add(event2);
-        }
-        else{
-            events.add(this);
+        } else {
+            WeekViewEvent weekViewEvent = new WeekViewEvent(this.getId(), this.getName(), this.getLocation(), fixedStartTime, fixedEndTime, this.isAllDay());
+            events.add(weekViewEvent);
         }
 
         return events;
