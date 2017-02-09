@@ -2306,6 +2306,13 @@ public class WeekView extends View {
             }
             mCurrentScrollDirection = Direction.NONE;
         }
+        //Remove new event on vertical scroll
+        if(mCurrentScrollDirection == Direction.VERTICAL && mNewEventRect != null) {
+            mNewEventRect = null;
+            if(!mEventRects.isEmpty() && mEventRects.get(mEventRects.size() - 1).event.getId() == mNewEventId) {
+                mEventRects.remove(mEventRects.size() - 1);
+            }
+        }
 
         return val;
     }
