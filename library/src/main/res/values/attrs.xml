@@ -10,7 +10,6 @@
             <enum name="friday" value="6"/>
             <enum name="saturday" value="7"/>
         </attr>
-        <attr name="autoTextColor" format="boolean"/>
         <attr name="startHour" format="integer"/>
         <attr name="hourHeight" format="dimension"/>
         <attr name="minHourHeight" format="dimension"/>
