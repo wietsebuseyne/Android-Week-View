@@ -225,7 +225,7 @@ public class WeekViewEvent {
         }
 
         if (!isSameDay(fixedStartTime, fixedEndTime)) {
-            Calendar firstEndTime = (Calendar) this.getStartTime().clone();
+            Calendar firstEndTime = (Calendar) fixedStartTime.clone();
             firstEndTime.set(Calendar.HOUR_OF_DAY, 23);
             firstEndTime.set(Calendar.MINUTE, 59);
 
