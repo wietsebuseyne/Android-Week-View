@@ -331,13 +331,18 @@ public class WeekView extends View {
                     if(mAddEventClickListener != null) {
                         //round selectedTime to resolution
                         selectedTime.add(Calendar.MINUTE, -(mNewEventLengthInMinutes / 2));
+                        //Fix selected time if before the minimum hour
+                        if(selectedTime.get(Calendar.HOUR_OF_DAY) < mMinTime) {
+                            selectedTime.set(Calendar.HOUR_OF_DAY, mMinTime);
+                            selectedTime.set(Calendar.MINUTE, 0);
+                        }
                         int unroundedMinutes = selectedTime.get(Calendar.MINUTE);
                         int mod = unroundedMinutes % mNewEventTimeResolutionInMinutes;
                         selectedTime.add(Calendar.MINUTE, mod < Math.ceil(mNewEventTimeResolutionInMinutes / 2) ? -mod : (mNewEventTimeResolutionInMinutes - mod));
 
                         Calendar endTime = (Calendar) selectedTime.clone();
                         //Minus one to ensure it is the same day and not midnight (next day)
-                        int maxMinutes = (24-selectedTime.get(Calendar.HOUR_OF_DAY))*60 - selectedTime.get(Calendar.MINUTE) - 1;
+                        int maxMinutes = (mMaxTime-selectedTime.get(Calendar.HOUR_OF_DAY))*60 - selectedTime.get(Calendar.MINUTE) - 1;
                         endTime.add(Calendar.MINUTE, Math.min(maxMinutes, mNewEventLengthInMinutes));
                         //If clicked at end of the day, fix selected startTime
                         if(maxMinutes < mNewEventLengthInMinutes) {
