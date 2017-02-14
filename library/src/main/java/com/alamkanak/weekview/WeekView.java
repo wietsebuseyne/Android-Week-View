@@ -326,7 +326,7 @@ public class WeekView extends View {
 
                     playSoundEffect(SoundEffectConstants.CLICK);
                     if(mEmptyViewClickListener != null)
-                        mEmptyViewClickListener.onEmptyViewClicked(selectedTime);
+                        mEmptyViewClickListener.onEmptyViewClicked((Calendar) selectedTime.clone());
 
                     if(mAddEventClickListener != null) {
                         //round selectedTime to resolution
