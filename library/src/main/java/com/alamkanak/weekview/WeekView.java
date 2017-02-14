@@ -319,6 +319,7 @@ public class WeekView extends View {
                 List<EventRect> tempEventRects = new ArrayList<>(mEventRects);
                 mEventRects = new ArrayList<EventRect>();
                 if (selectedTime != null) {
+                    selectedTime.add(Calendar.MINUTE, -(mNewEventLengthInMinutes / 2));
                     if(mNewEventRect != null) {
                         tempEventRects.remove(mNewEventRect);
                         mNewEventRect = null;
@@ -1158,10 +1159,11 @@ public class WeekView extends View {
         int availableHeight = (int) (rect.bottom - originalTop - mEventPadding * 2);
         int availableWidth = (int) (rect.right - originalLeft - mEventPadding * 2);
 
-        // Get text dimensions.
+        // Get text color if necessary
         if(textColorPicker != null) {
             mEventTextPaint.setColor(textColorPicker.getTextColor(event));
         }
+        // Get text dimensions.
         StaticLayout textLayout = new StaticLayout(bob, mEventTextPaint, availableWidth, Layout.Alignment.ALIGN_NORMAL, 1.0f, 0.0f, false);
         if(textLayout.getLineCount() > 0) {
             int lineHeight = textLayout.getHeight() / textLayout.getLineCount();
